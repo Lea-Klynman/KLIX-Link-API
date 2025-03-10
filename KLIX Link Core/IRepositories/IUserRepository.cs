@@ -3,16 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KLIX_Link_Core.DTOS;
 using KLIX_Link_Core.Entities;
 
 namespace KLIX_Link_Core.Repositories
 {
     public interface IUserRepository
     {
-        public Task<IEnumerable<User>> GetAllUsersAsync();
+        //Get
+        public  Task<IEnumerable<User>> GetAllUsersAsync();
         public Task<User> GetUserByIdAsync(int id);
         public Task<User> GetUserByEmailAsync(string email);
+
+
+        //Put
         public Task<User> AddUserAsync(User user);
+
+
+        //Post
+        public Task<User> LoginAsync(string email, string password);
+        public Task<bool> UpdatePasswordAsync(int id, string password);
+        public Task<bool> UpdateNameAsync(int id, string name);
+        public Task<bool> UpdateRoleAsync(int id, Role role);
+
+        //Delete
+        public Task<bool> DeleteUserAsync(int id);
+
 
     }
 }

@@ -1,11 +1,18 @@
+using System.Text;
 using System.Text.Json.Serialization;
+using KLIX_Link.Data;
 using KLIX_Link.Data.Repositories;
 using KLIX_Link_Core;
 using KLIX_Link_Core.IRepositories;
 using KLIX_Link_Core.Repositories;
 using KLIX_Link_Core.Services;
+using KLIX_Link_Service;
 using KLIX_Link_Service.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +30,10 @@ builder.Services.AddScoped<IFileService, UserFileService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserFileRepository, UserFileRepository>();
 
+//Data
+ builder.Services.AddScoped<IDataContext,DataContext>();
+
+
 
 //Data
 
@@ -32,8 +43,7 @@ builder.Services.AddDbContext<KLIX_Link.Data.DataContext>(options =>
 });
 
 
-//builder.Services.AddSingleton<DataContext>();
-//
+
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -41,13 +51,57 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 
+//add Authentication-JWT
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+        };
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Description = "Bearer Authentication with JWT Token",
+        Type = SecuritySchemeType.Http
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            new List<string>()
+        }
+    });
+});
 
-builder.Services.AddAutoMapper(typeof(ProfileMapping));
+builder.Services.AddAutoMapper(typeof(ProfileMapping),typeof(PostModelProfileMapping));
 
 var app = builder.Build();
 
@@ -58,6 +112,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
+
+app.UseAuthorization();
 app.UseAuthorization();
 
 app.MapControllers();

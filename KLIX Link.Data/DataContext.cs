@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KLIX_Link.Data
 {
-    public class DataContext: DbContext 
+    public class DataContext: DbContext ,IDataContext
     {
         public DbSet<User> _Users { get; set; }
         public DbSet<UserFile> _Files { get; set; }
