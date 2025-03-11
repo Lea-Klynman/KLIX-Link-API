@@ -73,6 +73,14 @@ builder.Services.AddAuthentication(options =>
     });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("EditorOrAdmin", policy => policy.RequireRole("Editor", "Admin"));
+    options.AddPolicy("ViewerOnly", policy => policy.RequireRole("Viewer"));
+});
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {

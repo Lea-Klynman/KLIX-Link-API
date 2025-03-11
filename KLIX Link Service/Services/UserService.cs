@@ -27,6 +27,7 @@ namespace KLIX_Link_Service.Services
         {
             var res = await _userRepository.GetAllUsersAsync();
             return _mapper.Map<UserDto[]>(res);
+            
         }
 
         public async Task<UserDto> GetUserByEmailAsync(string email)

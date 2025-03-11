@@ -102,7 +102,7 @@ namespace KLIX_Link.Data.Repositories
             {
                 var user = await _dataContext._Users.FirstOrDefaultAsync(user => user.Id == id);
                 if (user == null) return false;
-                user.Role = role;
+                user.Roles.Add( role);
                 await _dataContext.SaveChangesAsync();
                 return true;
             }
@@ -120,7 +120,7 @@ namespace KLIX_Link.Data.Repositories
             {
                 var res = await _dataContext._Users.FirstOrDefaultAsync(user => user.Id == id);
                 if (res == null) return false;
-                _dataContext._Users.Remove(res);
+                res.IsActive = false;
                 await _dataContext.SaveChangesAsync();
                 return true;
                 ;

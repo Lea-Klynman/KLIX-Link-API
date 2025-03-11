@@ -13,5 +13,6 @@ namespace KLIX_Link_Service.Post_Modle
         public int OwnerId { get; set; }
         public string Name { get; set; }
         public string FilePassword { get; set; }
+        public bool IsActive { get; set; }
     }
 }

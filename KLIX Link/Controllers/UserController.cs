@@ -2,6 +2,7 @@
 using KLIX_Link_Core.DTOS;
 using KLIX_Link_Core.Services;
 using KLIX_Link_Service.Post_Modle;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 
@@ -22,6 +23,7 @@ namespace KLIX_Link.Controllers
         }
         // GET: api/<UserController>
         [HttpGet]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsersAsync()
         {
             return Ok(await _userService.GetAllUsersAsync());
@@ -73,6 +75,7 @@ public async Task<ActionResult<bool>> UpdatePassword(int id, [FromBody] string p
         }
         // DELETE api/<UserController>/5
         [HttpDelete("/{id}")]
+        [Authorize(Policy = "EditorOrAdmin")]
         public async Task<ActionResult<bool>> DeleteUser(int id)
         {
             var res=await _userService.DeleteUserAsync(id); 
