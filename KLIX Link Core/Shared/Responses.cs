@@ -25,7 +25,7 @@ namespace KLIX_Link_Core.Shared
         }
 
         // Failure response with a custom message
-        public static Result<T> Failure(string errorMessage, int statusCode = 400)
+        public static Responses<T> Failure(string errorMessage, int statusCode = 400)
         {
             return new Responses<T>
             {

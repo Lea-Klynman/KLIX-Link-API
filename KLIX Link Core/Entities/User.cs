@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -15,10 +16,12 @@ namespace KLIX_Link_Core.Entities
         [MaxLength(50)]
         public string Name { get; set; }
         [Required]
+        [EmailAddress]
         public string Email { get; set; }
         [Required]
+        [PasswordPropertyText]
         public string Password { get; set; }
-        public List<int> FilesId { get; set; }
+        public ICollection<UserFile> Files { get; set; }
         [Required]
         public ICollection<Role> Roles { get; set; }
         public bool IsActive { get; set; } = true;

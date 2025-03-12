@@ -12,6 +12,9 @@ namespace KLIX_Link_Core.Entities
     {
         [Key]
         public int Id { get; set; }
+        [Required]
+
+
         public int OwnerId { get; set; }
         [ForeignKey("OwnerId")]
         public User User { get; set; }

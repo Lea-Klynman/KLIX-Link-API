@@ -16,14 +16,14 @@ namespace KLIX_Link.Controllers
     {
         readonly IUserService _userService;
         readonly IMapper _mapper;
-        public UserController(IMapper mapper ,IUserService userService)
+        public UserController(IMapper mapper, IUserService userService)
         {
             _mapper = mapper;
             _userService = userService;
         }
         // GET: api/<UserController>
         [HttpGet]
-        [Authorize(Policy = "AdminOnly")]
+        // [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsersAsync()
         {
             return Ok(await _userService.GetAllUsersAsync());
@@ -31,11 +31,11 @@ namespace KLIX_Link.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserDto>> GetUserByIdAsync(int id )
+        public async Task<ActionResult<UserDto>> GetUserByIdAsync(int id)
         {
             if (id < 0)
                 return BadRequest();
-            var res=await _userService.GetUserByIdAsync(id);
+            var res = await _userService.GetUserByIdAsync(id);
             if (res == null)
             {
                 return NotFound();
@@ -45,41 +45,41 @@ namespace KLIX_Link.Controllers
 
 
         [HttpGet("email")]
-        public async Task<ActionResult<UserDto>> GetUserByEmail(string email) 
+        public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
         {
-            var res=await _userService.GetUserByEmailAsync(email);
-            if(res == null)
+            var res = await _userService.GetUserByEmailAsync(email);
+            if (res == null)
                 return NotFound();
-            
+
             return Ok(res);
         }
 
-        
+
         // PUT api/<UserController>/5
         [HttpPut("/name/{id}")]
         public async Task<ActionResult<bool>> UpdateName(int id, [FromBody] string name)
         {
-            var res= await _userService.UpdateNameAsync(id, name);
-            if(!res)
+            var res = await _userService.UpdateNameAsync(id, name);
+            if (!res)
                 return NotFound();
             return Ok(res);
         }
 
         [HttpPut("/password/{id}")]
-public async Task<ActionResult<bool>> UpdatePassword(int id, [FromBody] string password)
+        public async Task<ActionResult<bool>> UpdatePassword(int id, [FromBody] string password)
         {
             var res = await _userService.UpdatePasswordAsync(id, password);
-            if(!res)
+            if (!res)
                 return NotFound();
             return Ok(res);
         }
         // DELETE api/<UserController>/5
         [HttpDelete("/{id}")]
-        [Authorize(Policy = "EditorOrAdmin")]
+        // [Authorize(Policy = "EditorOrAdmin")]
         public async Task<ActionResult<bool>> DeleteUser(int id)
         {
-            var res=await _userService.DeleteUserAsync(id); 
-            if(!res)
+            var res = await _userService.DeleteUserAsync(id);
+            if (!res)
                 return NotFound();
             return Ok(res);
         }

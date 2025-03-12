@@ -4,15 +4,19 @@ using KLIX_Link.Data;
 using KLIX_Link.Data.Repositories;
 using KLIX_Link_Core;
 using KLIX_Link_Core.IRepositories;
+using KLIX_Link_Core.IServices;
 using KLIX_Link_Core.Repositories;
 using KLIX_Link_Core.Services;
 using KLIX_Link_Service;
 using KLIX_Link_Service.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFileService, UserFileService>();
+builder.Services.AddScoped<IAuthService,AuthService>();
 
 
 
@@ -39,7 +44,8 @@ builder.Services.AddScoped<IUserFileRepository, UserFileRepository>();
 
 builder.Services.AddDbContext<KLIX_Link.Data.DataContext>(options =>
 {
-    options.UseSqlServer("Data Source=DESKTOP-13C4MS2;Initial Catalog=KLIX Link;Integrated Security=true");
+    var conection = "Host=localhost;Port=5432;Database=KLIX_Link;Username=postgres;Password=postgresql123";
+    options.UseNpgsql(conection);
 });
 
 
