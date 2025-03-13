@@ -17,7 +17,7 @@ namespace KLIX_Link_Core.Services
 
 
         //Put
-        public Task<UserDto> RegisterAsync(UserDto user);
+        public Task<UserDto> RegisterAsync(UserDto user, string[] roles);
 
         //Post
         public Task<UserDto> LoginAsync(string email, string password);

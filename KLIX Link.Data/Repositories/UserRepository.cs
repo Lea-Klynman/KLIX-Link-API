@@ -33,11 +33,13 @@ namespace KLIX_Link.Data.Repositories
         
         public async Task<User> GetUserByIdAsync(int id)
         {
-            return await _dataContext._Users.FirstOrDefaultAsync(user => user.Id == id);
+            return await _dataContext._Users.FirstOrDefaultAsync(user => user.Id == id)
+                
+                ;
         }
         
         
-        public async Task<User> AddUserAsync(User user)
+        public async Task<User> AddUserAsync(User user, string[] roles)
         {
             {
                 try

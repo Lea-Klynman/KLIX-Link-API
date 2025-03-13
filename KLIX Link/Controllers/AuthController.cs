@@ -57,15 +57,21 @@ namespace KLIX_Link.Controllers
 
         // POST api/<UserController>
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] UserPostmodel user)
+        public async Task<ActionResult> Register([FromBody] RegisterPostModel userRegister )
         {
+            if (!EmailValidator.IsValidEmail(userRegister.User.Email))
+            {
+                return BadRequest("Email Not valid");
 
-            var res = await _userService.RegisterAsync(_mapper.Map<UserDto>(user));
+            }
+
+                var res = await _userService.RegisterAsync(_mapper.Map<UserDto>(userRegister.User), userRegister.Roles);
             if (res == null)
             {
                 return BadRequest();
             }
-                var tokenString = _authService.GenerateJwtToken(res.Name, res.Roles.Select(role => role.RoleName).ToArray());
+
+                var tokenString = _authService.GenerateJwtToken(res.Name, userRegister.Roles);
                 return Ok(new { Token = tokenString, user = res });
             
 

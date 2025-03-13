@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using KLIX_Link_Core.DTOS;
 using KLIX_Link_Core.Entities;
+using KLIX_Link_Core.IRepositories;
 using KLIX_Link_Core.Repositories;
 using KLIX_Link_Core.Services;
 
@@ -14,10 +15,12 @@ namespace KLIX_Link_Service.Services
     public class UserService : IUserService
     {
         readonly IUserRepository _userRepository;
+        readonly IRoleRepository _roleRepository;
         readonly IMapper _mapper;
-        public UserService(IMapper mapper, IUserRepository userRepository)
+        public UserService(IMapper mapper, IUserRepository userRepository, IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
+            _roleRepository = roleRepository;
             _mapper = mapper;
         }
 
@@ -27,7 +30,7 @@ namespace KLIX_Link_Service.Services
         {
             var res = await _userRepository.GetAllUsersAsync();
             return _mapper.Map<UserDto[]>(res);
-            
+
         }
 
         public async Task<UserDto> GetUserByEmailAsync(string email)
@@ -52,9 +55,21 @@ namespace KLIX_Link_Service.Services
 
         //put
 
-        public async Task<UserDto> RegisterAsync(UserDto user)
+        public async Task<UserDto> RegisterAsync(UserDto user, string[] roles)
         {
-            var res = await _userRepository.AddUserAsync(_mapper.Map<User>(user));
+            var userEmail = await this.GetUserByEmailAsync(user.Email);
+            if (userEmail != null)
+            {
+                return null;
+            }
+            var res = await _userRepository.AddUserAsync(_mapper.Map<User>(user),roles);
+            if (res != null)
+            {
+                for (int i = 0; i < roles.Length; i++)
+                {
+                    await _userRepository.UpdateRoleAsync(res.Id, await _roleRepository.GetRoleByNameAsync(roles[i]));
+                }
+            }
             return _mapper.Map<UserDto>(res);
         }
 
@@ -83,6 +98,6 @@ namespace KLIX_Link_Service.Services
             return await _userRepository.DeleteUserAsync(id);
         }
 
-        
+
     }
 }

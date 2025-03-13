@@ -12,6 +12,8 @@ namespace KLIX_Link.Data
     {
         public DbSet<User> _Users { get; set; }
         public DbSet<UserFile> _Files { get; set; }
+        public DbSet<Role> _Roles { get; set; }
+        public DbSet<Permission> _Permissions { get; set; }
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
@@ -33,6 +35,10 @@ namespace KLIX_Link.Data
                 .WithMany(u => u.Files)
                 .HasForeignKey(uf => uf.OwnerId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+         .HasIndex(u => u.Email)
+         .IsUnique();
 
             base.OnModelCreating(modelBuilder);
         }

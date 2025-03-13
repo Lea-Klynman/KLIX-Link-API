@@ -27,6 +27,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFileService, UserFileService>();
 builder.Services.AddScoped<IAuthService,AuthService>();
+builder.Services.AddScoped<IRoleService,RoleService>();
 
 
 
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IAuthService,AuthService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserFileRepository, UserFileRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 
 //Data
  builder.Services.AddScoped<IDataContext,DataContext>();
@@ -48,6 +50,17 @@ builder.Services.AddDbContext<KLIX_Link.Data.DataContext>(options =>
     options.UseNpgsql(conection);
 });
 
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()  
+               .AllowAnyMethod()  
+               .AllowAnyHeader(); 
+    });
+});
 
 
 
@@ -125,6 +138,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 

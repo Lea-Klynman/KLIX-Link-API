@@ -17,7 +17,7 @@ namespace KLIX_Link_Core.Repositories
 
 
         //Put
-        public Task<User> AddUserAsync(User user);
+        public Task<User> AddUserAsync(User user, string[]  roles);
 
 
         //Post
