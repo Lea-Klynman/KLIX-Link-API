@@ -5,17 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using KLIX_Link_Core.Entities;
 
-namespace KLIX_Link_Core.DTOS
+namespace KLIX_Link_Service.Post_Modle
 {
-    public class UserDto
+    public class UserFilePostmodel
     {
         public int Id { get; set; }
+        public int OwnerId { get; set; }
         public string Name { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
-        public List<int> FilesId { get; set; }
+        public string FilePassword { get; set; }
         public bool IsActive { get; set; }
-        public ICollection<Role> Roles { get; set; }
-
     }
 }

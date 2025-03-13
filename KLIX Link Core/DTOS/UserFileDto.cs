@@ -16,5 +16,6 @@ namespace KLIX_Link_Core.DTOS
         public string EncryptedLink { get; set; }
         public string FilePassword { get; set; }
         public DateOnly CreateedAt { get; set; }
+        public bool IsActive { get; set; }
     }
 }
