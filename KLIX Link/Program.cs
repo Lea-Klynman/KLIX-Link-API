@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using DotNetEnv;
 using KLIX_Link.Data;
 using KLIX_Link.Data.Repositories;
 using KLIX_Link_Core;
@@ -18,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,9 +27,10 @@ var builder = WebApplication.CreateBuilder(args);
 //Service
 
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IFileService, UserFileService>();
+builder.Services.AddScoped<IUserFileService, UserFileService>();
 builder.Services.AddScoped<IAuthService,AuthService>();
 builder.Services.AddScoped<IRoleService,RoleService>();
+builder.Services.AddScoped<IPermissionService,PermissionService>();
 
 
 
@@ -36,6 +39,7 @@ builder.Services.AddScoped<IRoleService,RoleService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserFileRepository, UserFileRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 
 //Data
  builder.Services.AddScoped<IDataContext,DataContext>();
@@ -103,6 +107,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
+
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Scheme = "Bearer",
@@ -126,6 +131,8 @@ builder.Services.AddSwaggerGen(options =>
             new List<string>()
         }
     });
+    
+
 });
 
 builder.Services.AddAutoMapper(typeof(ProfileMapping),typeof(PostModelProfileMapping));
@@ -136,7 +143,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c=>
+    c.SwaggerEndpoint("./v1/swagger.json", "My API V1"));
 }
 
 app.UseCors("AllowAll");
@@ -144,7 +152,7 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 
 app.UseAuthorization();
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 

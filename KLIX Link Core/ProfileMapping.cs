@@ -14,6 +14,8 @@ namespace KLIX_Link_Core
         public ProfileMapping() {
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<UserFile, UserFileDto>().ReverseMap();
+            CreateMap<Permission, PermissionDTO>().ReverseMap();
+            CreateMap<Role, RoleDto>().ReverseMap();
 
         }
     }

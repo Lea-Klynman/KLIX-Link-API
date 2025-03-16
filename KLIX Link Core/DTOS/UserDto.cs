@@ -15,7 +15,6 @@ namespace KLIX_Link_Core.DTOS
         public string Password { get; set; }
         public List<int> FilesId { get; set; }
         public bool IsActive { get; set; }
-        public ICollection<Role> Roles { get; set; }
 
     }
 }

@@ -10,5 +10,6 @@ namespace KLIX_Link_Service.Post_Model
     {
         public string Email { get; set; }
         public string Password { get; set; }
+        public string[] Roles { get; set; }
     }
 }

@@ -29,6 +29,8 @@ namespace KLIX_Link_Core.Entities
         public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public bool IsActive { get; set; }=true;
 
+        //emails alloew to see th file
+        public ICollection<string> EmailAloowed { get; set; } = new List<string>();
 
     }
 }

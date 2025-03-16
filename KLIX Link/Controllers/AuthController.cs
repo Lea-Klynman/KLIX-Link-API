@@ -49,7 +49,7 @@ namespace KLIX_Link.Controllers
             if (res.IsActive == false)
                 return Unauthorized();
 
-            var tokenString = _authService.GenerateJwtToken(res.Name, res.Roles.Select(role => role.RoleName).ToArray());
+            var tokenString = _authService.GenerateJwtToken(res.Name, loginModel.Roles);
             return Ok(new { Token = tokenString, user = res });
 
         }
