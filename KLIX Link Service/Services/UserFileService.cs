@@ -26,7 +26,6 @@ namespace KLIX_Link_Service.Services
         {
             _userFileRepository = fileRepository;
             _mapper = mapper;
-            Console.WriteLine($"AWS_REGION from config: {configuration["AWS_REGION"]}");
             _s3Client = new AmazonS3Client(
                 configuration["AWS_ACCESS_KEY_ID"],
                 configuration["AWS_SECRET_ACCESS_KEY"],
@@ -102,7 +101,7 @@ namespace KLIX_Link_Service.Services
                 Key = fileName,
                 InputStream = new MemoryStream(encryptedData),
                 ContentType = file.ContentType
-            };  
+            };
 
             await _s3Client.PutObjectAsync(uploadRequest);
 
