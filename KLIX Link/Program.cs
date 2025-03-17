@@ -31,6 +31,7 @@ builder.Services.AddScoped<IUserFileService, UserFileService>();
 builder.Services.AddScoped<IAuthService,AuthService>();
 builder.Services.AddScoped<IRoleService,RoleService>();
 builder.Services.AddScoped<IPermissionService,PermissionService>();
+builder.Services.AddScoped<IEmailService,EmailService>();
 
 
 
