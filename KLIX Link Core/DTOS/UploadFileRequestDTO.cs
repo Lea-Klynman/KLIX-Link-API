@@ -12,5 +12,7 @@ namespace KLIX_Link_Core.DTOS
         public IFormFile File { get; set; }
         public string FileName { get; set; }
         public string Password { get; set; }
+        public string FileType { get; set; }
+
     }
 }

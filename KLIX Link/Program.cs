@@ -28,9 +28,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserFileService, UserFileService>();
-builder.Services.AddScoped<IAuthService,AuthService>();
-builder.Services.AddScoped<IRoleService,RoleService>();
-builder.Services.AddScoped<IPermissionService,PermissionService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<S3Service>();
 
 
 
@@ -42,7 +44,7 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 
 //Data
- builder.Services.AddScoped<IDataContext,DataContext>();
+builder.Services.AddScoped<IDataContext, DataContext>();
 
 
 
@@ -60,9 +62,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        builder.AllowAnyOrigin()  
-               .AllowAnyMethod()  
-               .AllowAnyHeader(); 
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
     });
 });
 
@@ -131,11 +133,11 @@ builder.Services.AddSwaggerGen(options =>
             new List<string>()
         }
     });
-    
+
 
 });
 
-builder.Services.AddAutoMapper(typeof(ProfileMapping),typeof(PostModelProfileMapping));
+builder.Services.AddAutoMapper(typeof(ProfileMapping), typeof(PostModelProfileMapping));
 
 var app = builder.Build();
 
@@ -143,7 +145,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c=>
+    app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("./v1/swagger.json", "My API V1"));
 }
 

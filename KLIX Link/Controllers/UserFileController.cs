@@ -79,7 +79,7 @@ namespace KLIX_Link.Controllers
                 return BadRequest("File is required.");
 
             var userId = id; // לממש בהתאם
-            var result = await _userFileService.UploadFileAsync(request.File, request.FileName, request.Password, userId);
+            var result = await _userFileService.UploadFileAsync(request.File, request.FileName, request.Password, userId,request.FileType);
             return Ok(new { encryptedLink = result });
         }
 

@@ -17,6 +17,69 @@ namespace KLIX_Link.Data.Repositories
         {
             _dataContext = context;
         }
+
+
+        //GET
+
+        public async Task<List<UserFile>> GetAllFilesAsync()
+        {
+            return await _dataContext._Files.ToListAsync();
+
+        }
+
+
+        public async Task<UserFile> GetFileByIdAsync(int id)
+        {
+            return await _dataContext._Files.FirstOrDefaultAsync(file => file.Id == id);
+        }
+
+
+        public async Task<UserFile> GetFileByNameAsync(string name)
+        {
+            return await _dataContext._Files.FirstOrDefaultAsync(file => file.Name == name);
+        }
+
+
+        public async Task<UserFile[]> GetUserFilesByUserIdAsync(int userId)
+        {
+            var userFiles = await _dataContext._Files.Where(file => file.OwnerId == userId).ToArrayAsync();
+            return userFiles;
+        }
+
+        public async Task<UserFile> GetFileByUrlAsync(string fileUrl)
+        {
+            return await _dataContext._Files.FirstOrDefaultAsync(file => file.FileLink == fileUrl);
+        }
+
+
+        public async Task<bool> IsFileNameExistsAsync(int ownerId, string fileName)
+        {
+            var res = await _dataContext._Files.Where(f => f.OwnerId == ownerId && f.Name == fileName).FirstOrDefaultAsync();
+            return res != null;
+        }
+
+        //PUT
+        public async Task<bool> UpdateFileNameAsync(UserFile userFile)
+        {
+
+            var userFileToUpdate = await _dataContext._Files.FirstOrDefaultAsync(file => file.Id == userFile.Id);
+            if (userFileToUpdate == null) return false;
+            userFileToUpdate.Name = userFile.Name;
+            try
+            {
+                await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
+
+
+        //POST
         public async Task<UserFile> AddFileAsync(UserFile file)
         {
             try
@@ -31,6 +94,7 @@ namespace KLIX_Link.Data.Repositories
             }
         }
 
+        //DELETE
         public async Task<bool> DeleteFileAsync(int id)
         {
             try
@@ -49,53 +113,9 @@ namespace KLIX_Link.Data.Repositories
             }
         }
 
-        public async Task<List<UserFile>> GetAllFilesAsync()
-        {
-            return await _dataContext._Files.ToListAsync();
 
-        }
-
-        public async Task<UserFile> GetFileByIdAsync(int id)
-        {
-            return await _dataContext._Files.FirstOrDefaultAsync(file => file.Id == id);
-        }
-
-        public async Task<UserFile> GetFileByNameAsync(string name)
-        {
-            return await _dataContext._Files.FirstOrDefaultAsync(file => file.Name == name);
-        }
-
-        public async Task<UserFile[]> GetUserFilesByUserIdAsync(int userId)
-        {
-            var userFiles = await _dataContext._Files.Where(file => file.OwnerId == userId).ToArrayAsync();
-            return userFiles;
-        }
-
-        public async Task<bool> updateFileNameAsync(UserFile userFile)
-        {
-
-            var userFileToUpdate = await _dataContext._Files.FirstOrDefaultAsync(file => file.Id == userFile.Id);
-            if (userFileToUpdate == null) return false;
-            if (userFileToUpdate.Name == userFile.Name) return true;
-            userFileToUpdate.Name = userFile.Name;
-            try
-            {
-                await _dataContext.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-
-        }
-
-        public async Task<bool> IsFileNameExistsAsync(int ownerId, string fileName)
-        {
-            var res= await _dataContext._Files.Where(f => f.OwnerId == ownerId && f.Name == fileName).FirstOrDefaultAsync();
-            return res != null;
-        }
     }
-    }
+}
+
 
 
