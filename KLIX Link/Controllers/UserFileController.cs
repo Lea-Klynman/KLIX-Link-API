@@ -23,11 +23,11 @@ namespace KLIX_Link.Controllers
 
         }
 
-        
 
-       
 
-       
+
+
+
         // GET: api/<FileController>
         [HttpGet]
         public async Task<IActionResult> GetAllUserFiles()
@@ -52,8 +52,9 @@ namespace KLIX_Link.Controllers
         }
         // GET api/<FileController>/5
 
+
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetFileById(int id)
+        public async Task<ActionResult> GetFileById(int id)
         {
             var file = await _userFileService.GetUserFileByIdAsync(id);
             if (file == null)
@@ -62,14 +63,42 @@ namespace KLIX_Link.Controllers
             return Ok(file);
         }
 
+        [HttpGet("filesShared/{email}")]
+        public async Task<ActionResult> GetFileshareByEmail(string email)
+        {
+            var file = await _userFileService.GetFileshareByEmail(email);
+            return Ok(file);
+        }
+
+
+
+        // POST api/<FileController>
+        [HttpPost("Sharing/{id}")]
+        public async Task<ActionResult> SharingFile(int id, [FromBody] string email)
+        {
+            var result = await _userFileService.SharingFileAsync(id, email);
+            if (result == null)
+                return NotFound("File not found.");
+            return Ok(result);
+        }
+
+        [HttpPost("CheckingIsAllowedView/{email}")]
+        public async Task<ActionResult> CheckingIsAllowedView(string email, [FromBody] SharingFileDTO sharingFileDTO)
+        {
+            var res= await _userFileService.CheckingIsAllowedViewAsync( email, sharingFileDTO);
+            if(!res)
+                return Unauthorized("Not allowed viewing");
+            var result = await _userFileService.GetDecryptFileAsync(sharingFileDTO);
+            if(result == null)
+                return NotFound("File not found.");
+            return Ok(res);
+        }
         [HttpPost("IsFile/{id}")]
-        public async Task<ActionResult> IsFileExist(int id,[FromBody] string name)
+        public async Task<ActionResult> IsFileExist(int id, [FromBody] string name)
         {
             var result = await _userFileService.IsFileNameExist(id, name);
             return Ok(result);
         }
-
-        // POST api/<FileController>
 
         [HttpPost("upload/{id}")]
         [Consumes("multipart/form-data")]
@@ -79,9 +108,10 @@ namespace KLIX_Link.Controllers
                 return BadRequest("File is required.");
 
             var userId = id; // לממש בהתאם
-            var result = await _userFileService.UploadFileAsync(request.File, request.FileName, request.Password, userId,request.FileType);
+            var result = await _userFileService.UploadFileAsync(request.File, request.FileName, request.Password, userId, request.FileType);
             return Ok(new { encryptedLink = result });
         }
+
 
         // PUT api/<FileController>/5
         [HttpPut("{id}")]
@@ -93,6 +123,7 @@ namespace KLIX_Link.Controllers
 
             return Ok(result);
         }
+
 
         // DELETE api/<FileController>/5
         [HttpDelete("{id}")]

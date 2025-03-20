@@ -34,6 +34,9 @@ namespace KLIX_Link_Core.Entities
         public DateOnly CreatedAt { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
         [Required]
+        public DateOnly UpdateAt { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+
+        [Required]
         public bool IsActive { get; set; } = true;
 
         [Required]

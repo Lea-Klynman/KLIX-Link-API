@@ -18,7 +18,7 @@ namespace KLIX_Link.Data.Repositories
             _dataContext = dataContext;
         }
         
-        
+        //GET
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
             return await _dataContext._Users.ToListAsync();
@@ -39,6 +39,7 @@ namespace KLIX_Link.Data.Repositories
         }
         
         
+        //POST
         public async Task<User> AddUserAsync(User user, string[] roles)
         {
             {

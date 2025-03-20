@@ -17,12 +17,12 @@ namespace KLIX_Link_Core.DTOS
 
         public string Name { get; set; }
 
-        public string FileLink { get; set; }
-
         public string EncryptedLink { get; set; }
 
         public string FilePassword { get; set; }
         public DateOnly CreatedAt { get; set; }
+        public DateOnly UpdateAt { get; set; } 
+
         public bool IsActive { get; set; } = true;
         public string FileType { get; set; }
 

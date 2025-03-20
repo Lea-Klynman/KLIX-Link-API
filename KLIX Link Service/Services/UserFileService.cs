@@ -12,7 +12,6 @@ using KLIX_Link_Core.DTOS;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-
 namespace KLIX_Link_Service.Services
 {
     public class UserFileService : IUserFileService
@@ -20,14 +19,16 @@ namespace KLIX_Link_Service.Services
 
         private readonly IUserFileRepository _userFileRepository;
         private readonly S3Service _fileStorageService;
+        private readonly IUserService _userService;
         private readonly string _encryptionKey;
         readonly IMapper _mapper;
 
-        public UserFileService(IUserFileRepository fileRepository, S3Service fileStorageService, IConfiguration configuration, IMapper mapper)
+        public UserFileService(IUserFileRepository fileRepository, S3Service fileStorageService, IConfiguration configuration, IMapper mapper,IUserService userService)
         {
             _userFileRepository = fileRepository;
             _fileStorageService = fileStorageService;
             _mapper = mapper;
+            _userService = userService;
             _encryptionKey = configuration["ENCRYPTION_KEY"];
 
         }
@@ -55,14 +56,14 @@ namespace KLIX_Link_Service.Services
         }
 
 
-        public async Task<FileContentResult> GetDecryptFileAsync(string encryptedLink, string password)
+        public async Task<FileContentResult> GetDecryptFileAsync(SharingFileDTO decryption)
         {
             // פענוח הקישור כדי לקבל את הנתיב לקובץ ב-S3
-            string fileUrl = DecryptLink(encryptedLink, _encryptionKey);
+            string fileUrl = DecryptLinkOrPassword(decryption.EncryptedLink, _encryptionKey);
 
             // חיפוש הקובץ במסד הנתונים
             var userFile = await _userFileRepository.GetFileByUrlAsync(fileUrl);
-            if (userFile == null || userFile.FilePassword != password)
+            if (userFile == null || userFile.FilePassword != decryption.Password)
             {
                 return null; // סיסמה לא נכונה או קובץ לא נמצא
             }
@@ -85,9 +86,11 @@ namespace KLIX_Link_Service.Services
         }
 
 
-        public async Task<bool> IsFileNameExist(int id, string name)
+        public async Task<List<UserFileDto>> GetFileshareByEmail(string email)
         {
-            return await _userFileRepository.IsFileNameExistsAsync(id, name);
+            var res = await _userFileRepository.GetFileshareByEmail(email);
+            var filteredFiles = res.Where(x => x.EmailAloowed.Any(e => email == e)).ToList();
+            return _mapper.Map<List<UserFileDto>>(filteredFiles);
         }
 
         //PUT
@@ -108,7 +111,7 @@ namespace KLIX_Link_Service.Services
                     return false;
                 }
                 userFile.FileLink = newLink;
-                userFile.EncryptedLink = EncryptLink(userFile.FileLink, _encryptionKey);
+                userFile.EncryptedLink = EncryptLinkOrPassword(userFile.FileLink, _encryptionKey);
                 userFile.Name = newFileName;
                 return await _userFileRepository.UpdateFileNameAsync(userFile);
             }
@@ -121,6 +124,42 @@ namespace KLIX_Link_Service.Services
 
 
         //POST
+        public async Task<bool> IsFileNameExist(int id, string name)
+        {
+            return await _userFileRepository.IsFileNameExistsAsync(id, name);
+        }
+
+        public async Task<bool> CheckingIsAllowedViewAsync(string email, SharingFileDTO sharingFile)
+        {
+            string decryptionpassword= DecryptLinkOrPassword(sharingFile.Password, _encryptionKey);
+            if(decryptionpassword != email)
+            {
+                return false;
+            }
+            string fileUrl = DecryptLinkOrPassword(sharingFile.EncryptedLink, _encryptionKey);
+            var userFile = await _userFileRepository.GetFileByUrlAsync(fileUrl);
+            return await _userFileRepository.CheckingIsAllowedEmailAsync(userFile.Id,email);
+        }
+
+        public async Task<SharingFileDTO> SharingFileAsync(int id, string email)
+        {
+            var user = await _userService.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                return null;
+            }
+            var userFile = await _userFileRepository.GetFileByIdAsync(id);
+            if (userFile == null) { return null; }
+            await _userFileRepository.UpdateEmailListAsync(id, email);
+            string password=EncryptLinkOrPassword(userFile.FilePassword, _encryptionKey);
+            return new SharingFileDTO
+            {
+                EncryptedLink = userFile.EncryptedLink,
+                Password = password
+            };
+        }
+        
+        
         public async Task<string> UploadFileAsync(IFormFile file, string fileName, string password, int userId, string type)
         {
             string fileType = type;
@@ -135,7 +174,7 @@ namespace KLIX_Link_Service.Services
                 return null;
             }
             // הצפנת הקישור
-            string encryptedLink = EncryptLink(fileUrl, _encryptionKey);
+            string encryptedLink = EncryptLinkOrPassword(fileUrl, _encryptionKey);
 
             // שמירה במסד הנתונים
             await _userFileRepository.AddFileAsync(new UserFile
@@ -202,7 +241,7 @@ namespace KLIX_Link_Service.Services
         }
 
 
-        private string EncryptLink(string data, string key)
+        private string EncryptLinkOrPassword(string data, string key)
         {
             byte[] dataBytes = Encoding.UTF8.GetBytes(data);
             using (var aes = Aes.Create())
@@ -219,7 +258,7 @@ namespace KLIX_Link_Service.Services
         }
 
 
-        private string DecryptLink(string encryptedLink, string key)
+        private string DecryptLinkOrPassword(string encryptedLink, string key)
         {
             byte[] encryptedBytes = Convert.FromBase64String(encryptedLink);
 
@@ -251,5 +290,6 @@ namespace KLIX_Link_Service.Services
             }
         }
 
+       
     }
 }

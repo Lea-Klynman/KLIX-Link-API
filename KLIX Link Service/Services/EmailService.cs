@@ -1,13 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Net.Mail;
+﻿
+using System;
 using System.Threading.Tasks;
-using Amazon.SimpleEmail.Model;
-using Amazon.SimpleEmail;
+using MailKit.Net.Smtp;
+using MimeKit;
 using KLIX_Link_Core.Entities;
 using KLIX_Link_Core.IServices;
 using Microsoft.Extensions.Configuration;
-
+using MailKit.Security;
 
 namespace KLIX_Link_Service.Services
 {
@@ -20,39 +19,33 @@ namespace KLIX_Link_Service.Services
             configuration = _configuration;
         }
 
-        public async Task SendEmailAsync(EmailRequest request)
+        public async Task<bool> SendEmailAsync(EmailRequest request)
         {
-            var client = new AmazonSimpleEmailServiceClient(configuration["AWS_ACCESS_KEY_ID"], configuration["AWS_SECRET_ACCESS_KEY"], Amazon.RegionEndpoint.GetBySystemName(configuration["AWS_REGION"]));
+            var emailMessage = new MimeMessage();
+            emailMessage.From.Add(new MailboxAddress("KLIX-Link", configuration["GOOGLE_USER_EMAIL"]));
+            emailMessage.To.Add(new MailboxAddress(request.To, request.To));
+            emailMessage.Subject = request.Subject;
 
-            var sendRequest = new SendEmailRequest
+            var bodyBuilder = new BodyBuilder { TextBody = request.Body };
+            emailMessage.Body = bodyBuilder.ToMessageBody();
+
+            
+
+            using (var client = new SmtpClient())
             {
-                Source = "l0533167552@gmail.com", // כתובת המייל שאימתת ב-SES
-                Destination = new Destination
+                try
                 {
-                    ToAddresses = new List<string> { request.To } // נמען
-                },
-                Message = new Message
+                    await client.ConnectAsync(configuration["SMTP_SERVER"], int.Parse(configuration["PORT"]), SecureSocketOptions.StartTls);
+                    await client.AuthenticateAsync(configuration["GOOGLE_USER_EMAIL"], configuration["PASSWORD"]);
+                    await client.SendAsync(emailMessage);
+                    await client.DisconnectAsync(true);
+                    return true;                }
+                catch (Exception ex)
                 {
-                    Subject = new Content(request.Subject),
-                    Body = new Body
-                    {
-                        Text = new Content(request.Body)
-                    }
+                    return false;
                 }
-            };
-
-            try
-            {
-                var response = await client.SendEmailAsync(sendRequest);
-                Console.WriteLine("המייל נשלח בהצלחה! Message ID: " + response.MessageId);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("שגיאה בשליחת מייל: " + ex.Message);
             }
         }
-
-
-
     }
 }
+
