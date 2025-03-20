@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -8,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KLIX_Link.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class baseDB : Migration
+    public partial class basedb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,7 +21,6 @@ namespace KLIX_Link.Data.Migrations
                     Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     Password = table.Column<string>(type: "text", nullable: false),
-                    FilesId = table.Column<List<int>>(type: "integer[]", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -52,8 +50,8 @@ namespace KLIX_Link.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     RoleName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
+                    UpdatedAt = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,7 +70,10 @@ namespace KLIX_Link.Data.Migrations
                     EncryptedLink = table.Column<string>(type: "text", nullable: false),
                     FilePassword = table.Column<string>(type: "text", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    UpdateAt = table.Column<DateOnly>(type: "date", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    FileType = table.Column<string>(type: "text", nullable: false),
+                    EmailAloowed = table.Column<string[]>(type: "text[]", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,6 +138,12 @@ namespace KLIX_Link.Data.Migrations
                 name: "IX__Files_OwnerId",
                 table: "_Files",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX__Users_Email",
+                table: "_Users",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PermissionRole_RolesId",

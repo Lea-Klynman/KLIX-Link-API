@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KLIX_Link.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250316014906_listsupdate")]
-    partial class listsupdate
+    [Migration("20250320212558_base-db")]
+    partial class basedb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -133,6 +133,10 @@ namespace KLIX_Link.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("FileType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
@@ -142,6 +146,9 @@ namespace KLIX_Link.Data.Migrations
 
                     b.Property<int>("OwnerId")
                         .HasColumnType("integer");
+
+                    b.Property<DateOnly>("UpdateAt")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 

@@ -8,7 +8,7 @@ namespace KLIX_Link_Core.DTOS
 {
     public class SharingFileDTO
     {
-        public string EncryptedLink { get; set; }
+        public int Id { get; set; }
         public string Password { get; set; }
     }
 }

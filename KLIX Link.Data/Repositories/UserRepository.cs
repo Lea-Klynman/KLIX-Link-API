@@ -18,6 +18,7 @@ namespace KLIX_Link.Data.Repositories
             _dataContext = dataContext;
         }
         
+
         //GET
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
@@ -64,6 +65,7 @@ namespace KLIX_Link.Data.Repositories
         }
 
 
+        //PUT
         public async Task<bool> UpdatePasswordAsync(int id, string password)
         {
             try
@@ -80,6 +82,7 @@ namespace KLIX_Link.Data.Repositories
             }
 
         }
+
 
         public async Task<bool> UpdateNameAsync(int id, string name)
         {
@@ -118,13 +121,47 @@ namespace KLIX_Link.Data.Repositories
         }
 
 
+        public async Task<bool> EnableUserAsync(int id)
+        {
+            try
+            {
+                var user = await _dataContext._Users.FindAsync(id);
+                if (user == null) return false;
+
+                user.IsActive = true;
+                await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DisableUserAsync(int id)
+        {
+            try
+            {
+                var user = await _dataContext._Users.FindAsync(id);
+                if (user == null) return false;
+
+                user.IsActive = false;
+                await _dataContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        //DELETE
         public async Task<bool> DeleteUserAsync(int id)
         {
             try
             {
                 var res = await _dataContext._Users.FirstOrDefaultAsync(user => user.Id == id);
                 if (res == null) return false;
-                res.IsActive = false;
+                 _dataContext._Users.Remove(res);
                 await _dataContext.SaveChangesAsync();
                 return true;
                 ;
@@ -136,6 +173,6 @@ namespace KLIX_Link.Data.Repositories
             }
         }
 
-
+       
     }
 }

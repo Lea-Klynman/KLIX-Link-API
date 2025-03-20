@@ -130,6 +130,10 @@ namespace KLIX_Link.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("FileType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
@@ -139,6 +143,9 @@ namespace KLIX_Link.Data.Migrations
 
                     b.Property<int>("OwnerId")
                         .HasColumnType("integer");
+
+                    b.Property<DateOnly>("UpdateAt")
+                        .HasColumnType("date");
 
                     b.HasKey("Id");
 

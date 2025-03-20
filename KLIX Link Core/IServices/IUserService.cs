@@ -24,6 +24,8 @@ namespace KLIX_Link_Core.Services
         public Task<bool> UpdatePasswordAsync(int id, string password);
         public Task<bool> UpdateNameAsync(int id, string name);
         public Task<bool> UpdateRoleAsync(int id, Role role);
+        public Task<bool> EnableUserAsync(int id);
+        public Task<bool> DisableUserAsync(int id);
 
         //Delete
         public Task<bool> DeleteUserAsync(int id);

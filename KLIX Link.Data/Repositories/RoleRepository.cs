@@ -16,10 +16,13 @@ namespace KLIX_Link.Data.Repositories
         {
             _context = context;
         }
+
+        //GET
         public async Task<IEnumerable<Role>> GetRolesAsync()
         {
             return await _context._Roles.ToListAsync();
         }
+
 
         public async Task<Role> GetRoleByNameAsync(string roleName)
         {
@@ -27,26 +30,20 @@ namespace KLIX_Link.Data.Repositories
             return res;
         }
 
+        //POST
         public async Task<bool> IsRoleHasPermissinAsync(string roleName, string permission)
         {
             var res = await _context._Roles.AnyAsync(r => r.RoleName == roleName && r.Permissions.Any(p => p.PermissionName == permission));
             return res;
         }
-        public async Task<bool> AddPermissinForRoleAsync(string roleName, Permission permission)
-        {
-            var role = await _context._Roles.FirstOrDefaultAsync(r => r.RoleName == roleName);
-            if (role == null)
-                return false;
-
-            role.Permissions.Add(permission);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+              
+        
         public async Task<bool> AddRoleAsync(Role role)
         {
             try
             {
                 _context._Roles.Add(role);
+
                 await _context.SaveChangesAsync();
 
                 return true;
@@ -56,6 +53,21 @@ namespace KLIX_Link.Data.Repositories
                 throw new Exception("failed to add role");
             }
         }
+
+
+        public async Task<bool> AddPermissinForRoleAsync(string roleName, Permission permission)
+        {
+            var role = await _context._Roles.FirstOrDefaultAsync(r => r.RoleName == roleName);
+            if (role == null)
+                return false;
+
+            role.Permissions.Add(permission);
+            role.UpdatedAt = DateOnly.FromDateTime(DateTime.Now);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
         public async Task<bool> UpdateRoleAsync(int id, Role role)
         {
             try
@@ -74,6 +86,10 @@ namespace KLIX_Link.Data.Repositories
                 return false;
             }
         }
+
+
+        //DELETE
+
         public async Task<bool> DeleteRoleAsync(int id)
         {
             try

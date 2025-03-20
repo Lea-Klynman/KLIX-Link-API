@@ -73,6 +73,25 @@ namespace KLIX_Link.Controllers
                 return NotFound();
             return Ok(res);
         }
+
+
+        [HttpPut("/enable/{id}")]
+        public async Task<ActionResult<bool>> EnableUser(int id)
+        {
+            var res = await _userService.EnableUserAsync(id);
+            if (!res)
+                return NotFound();
+            return Ok(res);
+        }
+
+        [HttpPut("/disable/{id}")]
+        public async Task<ActionResult<bool>> DisableUser(int id)
+        {
+            var res = await _userService.DisableUserAsync(id);
+            if (!res)
+                return NotFound();
+            return Ok(res);
+        }
         // DELETE api/<UserController>/5
         [HttpDelete("/{id}")]
         // [Authorize(Policy = "EditorOrAdmin")]

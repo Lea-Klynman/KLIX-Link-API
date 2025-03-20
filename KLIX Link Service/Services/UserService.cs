@@ -91,6 +91,16 @@ namespace KLIX_Link_Service.Services
             return await _userRepository.UpdateRoleAsync(id, role);
         }
 
+        public async Task<bool> EnableUserAsync(int id)
+        {
+            return await _userRepository.EnableUserAsync(id);
+        }
+
+        public async Task<bool> DisableUserAsync(int id)
+        {
+            return await _userRepository.DisableUserAsync(id);
+        }
+
         //Delete
 
         public async Task<bool> DeleteUserAsync(int id)
@@ -98,6 +108,6 @@ namespace KLIX_Link_Service.Services
             return await _userRepository.DeleteUserAsync(id);
         }
 
-
+       
     }
 }

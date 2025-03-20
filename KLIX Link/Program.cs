@@ -52,7 +52,7 @@ builder.Services.AddScoped<IDataContext, DataContext>();
 
 builder.Services.AddDbContext<KLIX_Link.Data.DataContext>(options =>
 {
-    var conection = "Host=localhost;Port=5432;Database=KLIX_Link;Username=postgres;Password=postgresql123";
+    var conection = "Host=localhost;Port=5432;Database=KLIX_LinkDB;Username=postgres;Password=postgresql123";
     options.UseNpgsql(conection);
 });
 

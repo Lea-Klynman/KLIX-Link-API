@@ -82,7 +82,8 @@ namespace KLIX_Link.Controllers
             return Ok(result);
         }
 
-        [HttpPost("CheckingIsAllowedView/{email}")]
+       
+        [HttpPost("CheckingIsAllowedView/{id}")]
         public async Task<ActionResult> CheckingIsAllowedView(string email, [FromBody] SharingFileDTO sharingFileDTO)
         {
             var res= await _userFileService.CheckingIsAllowedViewAsync( email, sharingFileDTO);
@@ -93,6 +94,8 @@ namespace KLIX_Link.Controllers
                 return NotFound("File not found.");
             return Ok(res);
         }
+        
+        
         [HttpPost("IsFile/{id}")]
         public async Task<ActionResult> IsFileExist(int id, [FromBody] string name)
         {
@@ -100,6 +103,7 @@ namespace KLIX_Link.Controllers
             return Ok(result);
         }
 
+       
         [HttpPost("upload/{id}")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadFile(int id, [FromForm] UploadFileRequestDTO request)
@@ -110,6 +114,24 @@ namespace KLIX_Link.Controllers
             var userId = id; // לממש בהתאם
             var result = await _userFileService.UploadFileAsync(request.File, request.FileName, request.Password, userId, request.FileType);
             return Ok(new { encryptedLink = result });
+        }
+
+
+
+        [HttpPost("decrypt-file")]
+        public async Task<IActionResult> GetDecryptFile([FromBody] SharingFileDTO request)
+        {
+            var result = await _userFileService.GetDecryptFileAsync(request);
+            if (result == null)
+            {
+                return Unauthorized("Invalid password or file not found.");
+            }
+
+            // החזרת הקובץ להורדה
+            return result;
+
+
+
         }
 
 
