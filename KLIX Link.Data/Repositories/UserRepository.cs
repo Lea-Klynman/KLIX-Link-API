@@ -22,7 +22,7 @@ namespace KLIX_Link.Data.Repositories
         //GET
         public async Task<IEnumerable<User>> GetAllUsersAsync()
         {
-            return await _dataContext._Users.ToListAsync();
+            return await _dataContext._Users.Include(u=>u.Roles).ToListAsync();
         }
        
         

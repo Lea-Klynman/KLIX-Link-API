@@ -32,6 +32,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUserActivityService, UserActivityService>();
 builder.Services.AddScoped<S3Service>();
 
 
@@ -42,6 +43,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserFileRepository, UserFileRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<IUserActivityRepository, UserActivityRepository>();
 
 //Data
 builder.Services.AddScoped<IDataContext, DataContext>();
@@ -52,7 +54,7 @@ builder.Services.AddScoped<IDataContext, DataContext>();
 
 builder.Services.AddDbContext<KLIX_Link.Data.DataContext>(options =>
 {
-    var conection = "Host=localhost;Port=5432;Database=KLIX_LinkDB;Username=postgres;Password=postgresql123";
+    var conection = "Host=localhost;Port=5432;Database=KLIX_Link;Username=postgres;Password=postgresql123";
     options.UseNpgsql(conection);
 });
 

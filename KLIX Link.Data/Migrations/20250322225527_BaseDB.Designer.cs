@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KLIX_Link.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250320212558_base-db")]
-    partial class basedb
+    [Migration("20250322225527_BaseDB")]
+    partial class BaseDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,6 +106,36 @@ namespace KLIX_Link.Data.Migrations
                     b.ToTable("_Users");
                 });
 
+            modelBuilder.Entity("KLIX_Link_Core.Entities.UserActivityLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActionType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("FileId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("_UserActivityLogs");
+                });
+
             modelBuilder.Entity("KLIX_Link_Core.Entities.UserFile", b =>
                 {
                     b.Property<int>("Id")
@@ -185,6 +215,23 @@ namespace KLIX_Link.Data.Migrations
                     b.HasIndex("UsersId");
 
                     b.ToTable("RoleUser");
+                });
+
+            modelBuilder.Entity("KLIX_Link_Core.Entities.UserActivityLog", b =>
+                {
+                    b.HasOne("KLIX_Link_Core.Entities.UserFile", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId");
+
+                    b.HasOne("KLIX_Link_Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("File");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("KLIX_Link_Core.Entities.UserFile", b =>

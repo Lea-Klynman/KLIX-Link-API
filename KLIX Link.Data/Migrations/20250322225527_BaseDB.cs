@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KLIX_Link.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class basedb : Migration
+    public partial class BaseDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -134,10 +134,47 @@ namespace KLIX_Link.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "_UserActivityLogs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    ActionType = table.Column<string>(type: "text", nullable: false),
+                    FileId = table.Column<int>(type: "integer", nullable: true),
+                    Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__UserActivityLogs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK__UserActivityLogs__Files_FileId",
+                        column: x => x.FileId,
+                        principalTable: "_Files",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK__UserActivityLogs__Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "_Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX__Files_OwnerId",
                 table: "_Files",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX__UserActivityLogs_FileId",
+                table: "_UserActivityLogs",
+                column: "FileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX__UserActivityLogs_UserId",
+                table: "_UserActivityLogs",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX__Users_Email",
@@ -160,13 +197,16 @@ namespace KLIX_Link.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "_Files");
+                name: "_UserActivityLogs");
 
             migrationBuilder.DropTable(
                 name: "PermissionRole");
 
             migrationBuilder.DropTable(
                 name: "RoleUser");
+
+            migrationBuilder.DropTable(
+                name: "_Files");
 
             migrationBuilder.DropTable(
                 name: "Permissions");

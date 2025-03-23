@@ -12,55 +12,62 @@ namespace KLIX_Link.Controllers
     public class PermissionController : ControllerBase
     {
         readonly IPermissionService _permissionService;
+
         public PermissionController(IPermissionService permissionService)
         {
             _permissionService = permissionService;
         }
+
+
         // GET: api/<PermissionController>
         [HttpGet]
-        public async Task<ActionResult> GetAllPermissin()
+        public async Task<ActionResult> GetAllPermissinAsync()
         {
             return Ok(await _permissionService.GetPermissionsAsync());
         }
 
         // GET api/<PermissionController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get(int id)
+        public async Task<ActionResult> GetAsync(int id)
         {
             var res = await _permissionService.GetPermissionByIdAsync(id);
             if (res == null) return NotFound();
             return Ok(res);
         }
 
+
         [HttpGet("/name/{name}")]
-        public async Task<ActionResult> GetbyName(string name)
+        public async Task<ActionResult> GetbyNameAsync(string name)
         {
             var res = await _permissionService.GetPermissionByNameAsync(name);
             if (res == null) return NotFound();
             return Ok(res);
         }
 
+
         // POST api/<PermissionController>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] PermissionDTO permission)
+        public async Task<ActionResult> PostAsync([FromBody] PermissionDTO permission)
         {
             var res = await _permissionService.AddPermissionAsync( permission);
             if (res == null) return BadRequest();
             return Ok(res);
         }
 
+
         // PUT api/<PermissionController>/5
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put(int id, [FromBody] PermissionDTO permission)
+        public async Task<ActionResult> PutAsync(int id, [FromBody] PermissionDTO permission)
         {
             var res = await _permissionService.UpdatePermissionAsync(id, permission);
             if (res == null) return BadRequest();
             return Ok(res);
         }
 
+
         // DELETE api/<PermissionController>/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteAsync(int id)
         {
             var res = await _permissionService.RemovePermissionAsync(id);
             if (!res) return NotFound();

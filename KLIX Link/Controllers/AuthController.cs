@@ -33,9 +33,10 @@ namespace KLIX_Link.Controllers
             _authService = authService;
         }
 
+
         [HttpPost("login")]
 
-        public async Task<ActionResult> Login([FromBody] LoginModel loginModel)
+        public async Task<ActionResult> LoginAsync([FromBody] LoginModel loginModel)
         {
             if (!EmailValidator.IsValidEmail(loginModel.Email))
             {
@@ -57,7 +58,7 @@ namespace KLIX_Link.Controllers
 
         // POST api/<UserController>
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterPostModel userRegister )
+        public async Task<ActionResult> RegisterAsync([FromBody] RegisterPostModel userRegister )
         {
             if (!EmailValidator.IsValidEmail(userRegister.User.Email))
             {

@@ -60,7 +60,7 @@ namespace KLIX_Link.Data.Repositories
 
         public async Task<List<UserFile>> GetFileshareByEmail(string email)
         {
-           return _dataContext._Files.Include(s => s.EmailAloowed).ToList();
+           return _dataContext._Files.ToList();
         }
 
         //PUT

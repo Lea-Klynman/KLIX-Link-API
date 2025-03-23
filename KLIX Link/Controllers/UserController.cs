@@ -45,7 +45,7 @@ namespace KLIX_Link.Controllers
 
 
         [HttpGet("email")]
-        public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
+        public async Task<ActionResult<UserDto>> GetUserByEmailAsync(string email)
         {
             var res = await _userService.GetUserByEmailAsync(email);
             if (res == null)
@@ -57,7 +57,7 @@ namespace KLIX_Link.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("/name/{id}")]
-        public async Task<ActionResult<bool>> UpdateName(int id, [FromBody] string name)
+        public async Task<ActionResult<bool>> UpdateNameAsync(int id, [FromBody] string name)
         {
             var res = await _userService.UpdateNameAsync(id, name);
             if (!res)
@@ -66,7 +66,7 @@ namespace KLIX_Link.Controllers
         }
 
         [HttpPut("/password/{id}")]
-        public async Task<ActionResult<bool>> UpdatePassword(int id, [FromBody] string password)
+        public async Task<ActionResult<bool>> UpdatePasswordAsync(int id, [FromBody] string password)
         {
             var res = await _userService.UpdatePasswordAsync(id, password);
             if (!res)
@@ -76,7 +76,7 @@ namespace KLIX_Link.Controllers
 
 
         [HttpPut("/enable/{id}")]
-        public async Task<ActionResult<bool>> EnableUser(int id)
+        public async Task<ActionResult<bool>> EnableUserAsync(int id)
         {
             var res = await _userService.EnableUserAsync(id);
             if (!res)
@@ -85,7 +85,7 @@ namespace KLIX_Link.Controllers
         }
 
         [HttpPut("/disable/{id}")]
-        public async Task<ActionResult<bool>> DisableUser(int id)
+        public async Task<ActionResult<bool>> DisableUserAsync(int id)
         {
             var res = await _userService.DisableUserAsync(id);
             if (!res)
@@ -95,7 +95,7 @@ namespace KLIX_Link.Controllers
         // DELETE api/<UserController>/5
         [HttpDelete("/{id}")]
         // [Authorize(Policy = "EditorOrAdmin")]
-        public async Task<ActionResult<bool>> DeleteUser(int id)
+        public async Task<ActionResult<bool>> DeleteUserAsync(int id)
         {
             var res = await _userService.DeleteUserAsync(id);
             if (!res)

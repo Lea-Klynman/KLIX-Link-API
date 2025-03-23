@@ -14,6 +14,8 @@ namespace KLIX_Link.Data
         public DbSet<UserFile> _Files { get; set; }
         public DbSet<Role> _Roles { get; set; }
         public DbSet<Permission> _Permissions { get; set; }
+        public DbSet<UserActivityLog> _UserActivityLogs { get; set; }
+
 
         public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
@@ -21,7 +23,7 @@ namespace KLIX_Link.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=KLIX_LinkDB;Username=postgres;Password=postgresql123");
+                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=KLIX_Link;Username=postgres;Password=postgresql123");
             }
 
             optionsBuilder.LogTo(m => Console.WriteLine(m));

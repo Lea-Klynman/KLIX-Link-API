@@ -17,11 +17,14 @@ namespace KLIX_Link_Service.Services
         readonly IUserRepository _userRepository;
         readonly IRoleRepository _roleRepository;
         readonly IMapper _mapper;
-        public UserService(IMapper mapper, IUserRepository userRepository, IRoleRepository roleRepository)
+        readonly IUserActivityRepository _userActivityRepository;
+
+        public UserService(IMapper mapper, IUserRepository userRepository, IRoleRepository roleRepository, IUserActivityRepository userActivityRepository)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _mapper = mapper;
+            _userActivityRepository = userActivityRepository;
         }
 
         //Get
@@ -29,6 +32,7 @@ namespace KLIX_Link_Service.Services
         public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
         {
             var res = await _userRepository.GetAllUsersAsync();
+            res = res.ToList().Where(user => !user.Roles.Any(role => role.RoleName == "Admin"));
             return _mapper.Map<UserDto[]>(res);
 
         }
@@ -48,8 +52,12 @@ namespace KLIX_Link_Service.Services
 
         public async Task<UserDto> LoginAsync(string email, string password)
         {
-            var res = await _userRepository.LoginAsync(email, password);
-            return _mapper.Map<UserDto>(res);
+            var user = await _userRepository.LoginAsync(email, password);
+            if (user != null)
+            {
+                await _userActivityRepository.LogActivityAsync(user.Id, "Login");
+            }
+            return _mapper.Map<UserDto>(user);
         }
 
 
@@ -69,6 +77,7 @@ namespace KLIX_Link_Service.Services
                 {
                     await _userRepository.UpdateRoleAsync(res.Id, await _roleRepository.GetRoleByNameAsync(roles[i]));
                 }
+                await _userActivityRepository.LogActivityAsync(res.Id, "Register");
             }
             return _mapper.Map<UserDto>(res);
         }

@@ -17,8 +17,9 @@ namespace KLIX_Link.Controllers
             _emailService = emailService;
         }
 
+
         [HttpPost("send")]
-        public async Task<IActionResult> SendEmail([FromBody] EmailRequest request)
+        public async Task<IActionResult> SendEmailAsync([FromBody] EmailRequest request)
         {
             await _emailService.SendEmailAsync(request);
             return Ok();
