@@ -82,20 +82,28 @@ namespace KLIX_Link.Controllers
             return Ok(result);
         }
 
-       
-        [HttpPost("CheckingIsAllowedView/{id}")]
-        public async Task<ActionResult> CheckingIsAllowedViewAsync(string email, [FromBody] SharingFileDTO sharingFileDTO)
+
+        [HttpPost("CheckingIsAllowedView/{email}")]
+        public async Task<IActionResult> CheckingIsAllowedViewAsync(string email, [FromBody] SharingFileDTO sharingFileDTO)
         {
-            var res= await _userFileService.CheckingIsAllowedViewAsync( email, sharingFileDTO);
-            if(!res)
+            var isAllowed = await _userFileService.CheckingIsAllowedViewAsync(email, sharingFileDTO);
+            if (!isAllowed)
                 return Unauthorized("Not allowed viewing");
-            var result = await _userFileService.GetDecryptFileAsync(sharingFileDTO);
-            if(result == null)
+
+            var file = await _userFileService.GetUserFileByIdAsync(sharingFileDTO.Id);
+            if (file == null)
                 return NotFound("File not found.");
-            return Ok(res);
+
+            sharingFileDTO.Password = file.FilePassword;
+            var result = await _userFileService.GetDecryptFileAsync(sharingFileDTO);
+            if (result == null)
+                return NotFound("File not found.");
+
+            // **שינוי: החזרת הקובץ במקום `Ok(res)`**
+            return File(result.FileContents, result.ContentType, result.FileDownloadName);
         }
-        
-        
+
+
         [HttpPost("IsFile/{id}")]
         public async Task<ActionResult> IsFileExistAsync(int id, [FromBody] string name)
         {
