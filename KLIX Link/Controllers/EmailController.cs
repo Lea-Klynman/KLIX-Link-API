@@ -1,6 +1,7 @@
 ﻿using KLIX_Link_Core.Entities;
 using KLIX_Link_Core.IServices;
 using KLIX_Link_Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

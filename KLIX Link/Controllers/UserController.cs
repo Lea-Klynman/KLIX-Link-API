@@ -21,9 +21,11 @@ namespace KLIX_Link.Controllers
             _mapper = mapper;
             _userService = userService;
         }
+
+
         // GET: api/<UserController>
         [HttpGet]
-        // [Authorize(Policy = "AdminOnly")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsersAsync()
         {
             return Ok(await _userService.GetAllUsersAsync());
@@ -31,6 +33,7 @@ namespace KLIX_Link.Controllers
 
         // GET api/<UserController>/5
         [HttpGet("{id}")]
+        [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<UserDto>> GetUserByIdAsync(int id)
         {
             if (id < 0)
@@ -45,6 +48,7 @@ namespace KLIX_Link.Controllers
 
 
         [HttpGet("email")]
+        [Authorize(Policy = "UserOrAdmin")]
         public async Task<ActionResult<UserDto>> GetUserByEmailAsync(string email)
         {
             var res = await _userService.GetUserByEmailAsync(email);
@@ -56,7 +60,8 @@ namespace KLIX_Link.Controllers
 
 
         // PUT api/<UserController>/5
-        [HttpPut("/name/{id}")]
+        [HttpPut("name/{id}")]
+        [Authorize(Policy = "UserOnly")]
         public async Task<ActionResult<bool>> UpdateNameAsync(int id, [FromBody] string name)
         {
             var res = await _userService.UpdateNameAsync(id, name);
@@ -65,7 +70,8 @@ namespace KLIX_Link.Controllers
             return Ok(res);
         }
 
-        [HttpPut("/password/{id}")]
+        [HttpPut("password/{id}")]
+        [Authorize(Policy = "UserOnly")]
         public async Task<ActionResult<bool>> UpdatePasswordAsync(int id, [FromBody] string password)
         {
             var res = await _userService.UpdatePasswordAsync(id, password);
@@ -75,7 +81,8 @@ namespace KLIX_Link.Controllers
         }
 
 
-        [HttpPut("/enable/{id}")]
+        [HttpPut("enable/{id}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<bool>> EnableUserAsync(int id)
         {
             var res = await _userService.EnableUserAsync(id);
@@ -84,7 +91,8 @@ namespace KLIX_Link.Controllers
             return Ok(res);
         }
 
-        [HttpPut("/disable/{id}")]
+        [HttpPut("disable/{id}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult<bool>> DisableUserAsync(int id)
         {
             var res = await _userService.DisableUserAsync(id);
@@ -93,8 +101,8 @@ namespace KLIX_Link.Controllers
             return Ok(res);
         }
         // DELETE api/<UserController>/5
-        [HttpDelete("/{id}")]
-        // [Authorize(Policy = "EditorOrAdmin")]
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "UserOnly")]
         public async Task<ActionResult<bool>> DeleteUserAsync(int id)
         {
             var res = await _userService.DeleteUserAsync(id);

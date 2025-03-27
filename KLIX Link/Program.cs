@@ -52,12 +52,12 @@ builder.Services.AddScoped<IDataContext, DataContext>();
 
 //Data
 
+var connectionString = builder.Configuration["DB_CONNECTION_STRING"];
+
 builder.Services.AddDbContext<KLIX_Link.Data.DataContext>(options =>
 {
-    var conection = "Host=localhost;Port=5432;Database=KLIX_Link;Username=postgres;Password=postgresql123";
-    options.UseNpgsql(conection);
+    options.UseNpgsql(connectionString);
 });
-
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -95,7 +95,7 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuerSigningKey = true,
             ValidIssuer = builder.Configuration["JWT:Issuer"],
             ValidAudience = builder.Configuration["JWT:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["KEY"]))
         };
     });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -103,8 +103,8 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-    options.AddPolicy("EditorOrAdmin", policy => policy.RequireRole("Editor", "Admin"));
-    options.AddPolicy("ViewerOnly", policy => policy.RequireRole("Viewer"));
+    options.AddPolicy("UserOrAdmin", policy => policy.RequireRole("User", "Admin"));
+    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
 });
 
 
@@ -156,7 +156,6 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 
 app.UseAuthorization();
-//app.UseAuthorization();
 
 app.MapControllers();
 

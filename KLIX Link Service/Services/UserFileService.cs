@@ -163,7 +163,7 @@ namespace KLIX_Link_Service.Services
         
         public async Task<string> UploadFileAsync(IFormFile file, string fileName, string password, int userId, string type)
         {
-            string fileType = type;
+            string fileType = file.ContentType;
             // הצפנת הקובץ
             byte[] encryptedData = EncryptFile(file, _encryptionKey, userId, fileName);
 

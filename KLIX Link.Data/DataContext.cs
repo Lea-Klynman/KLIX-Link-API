@@ -5,11 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using KLIX_Link_Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace KLIX_Link.Data
 {
     public class DataContext : DbContext, IDataContext
     {
+        private readonly IConfiguration _configuration;
+
         public DbSet<User> _Users { get; set; }
         public DbSet<UserFile> _Files { get; set; }
         public DbSet<Role> _Roles { get; set; }
@@ -17,13 +20,17 @@ namespace KLIX_Link.Data
         public DbSet<UserActivityLog> _UserActivityLogs { get; set; }
 
 
-        public DataContext(DbContextOptions<DataContext> options) : base(options) { }
+        public DataContext(DbContextOptions<DataContext> options, IConfiguration configuration) : base(options) {
+        _configuration = configuration;
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=KLIX_Link;Username=postgres;Password=postgresql123");
+                var connectionString = _configuration["DB_CONNECTION_STRING"];
+
+                optionsBuilder.UseNpgsql(connectionString);
             }
 
             optionsBuilder.LogTo(m => Console.WriteLine(m));
