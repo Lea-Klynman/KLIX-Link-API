@@ -7,6 +7,7 @@ using KLIX_Link_Core.Entities;
 using KLIX_Link_Core.IRepositories;
 using Microsoft.EntityFrameworkCore;
 
+
 namespace KLIX_Link.Data.Repositories
 {
     public class RoleRepository : IRoleRepository
