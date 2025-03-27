@@ -1,12 +1,25 @@
+using System.Text;
 using System.Text.Json.Serialization;
+using DotNetEnv;
+using KLIX_Link.Data;
 using KLIX_Link.Data.Repositories;
 using KLIX_Link_Core;
 using KLIX_Link_Core.IRepositories;
+using KLIX_Link_Core.IServices;
 using KLIX_Link_Core.Repositories;
 using KLIX_Link_Core.Services;
+using KLIX_Link_Service;
 using KLIX_Link_Service.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +27,13 @@ var builder = WebApplication.CreateBuilder(args);
 //Service
 
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IFileService, UserFileService>();
+builder.Services.AddScoped<IUserFileService, UserFileService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IPermissionService, PermissionService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IUserActivityService, UserActivityService>();
+builder.Services.AddScoped<S3Service>();
 
 
 
@@ -22,18 +41,36 @@ builder.Services.AddScoped<IFileService, UserFileService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserFileRepository, UserFileRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
+builder.Services.AddScoped<IUserActivityRepository, UserActivityRepository>();
+
+//Data
+builder.Services.AddScoped<IDataContext, DataContext>();
+
 
 
 //Data
 
+var connectionString = builder.Configuration["DB_CONNECTION_STRING"];
+
 builder.Services.AddDbContext<KLIX_Link.Data.DataContext>(options =>
 {
-    options.UseSqlServer("Data Source=DESKTOP-13C4MS2;Initial Catalog=KLIX Link;Integrated Security=true");
+    options.UseNpgsql(connectionString);
+});
+
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
 });
 
 
-//builder.Services.AddSingleton<DataContext>();
-//
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -41,13 +78,68 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.WriteIndented = true;
 });
 
+//add Authentication-JWT
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["KEY"]))
+        };
+    });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("UserOrAdmin", policy => policy.RequireRole("User", "Admin"));
+    options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
+});
 
-builder.Services.AddAutoMapper(typeof(ProfileMapping));
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Description = "Bearer Authentication with JWT Token",
+        Type = SecuritySchemeType.Http
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            },
+            new List<string>()
+        }
+    });
+
+
+});
+
+builder.Services.AddAutoMapper(typeof(ProfileMapping), typeof(PostModelProfileMapping));
 
 var app = builder.Build();
 
@@ -55,8 +147,13 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    c.SwaggerEndpoint("./v1/swagger.json", "My API V1"));
 }
+
+app.UseCors("AllowAll");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

@@ -12,6 +12,8 @@ namespace KLIX_Link.Data
     {
         public DbSet<User> _Users { get; set; }
         public DbSet<UserFile> _Files { get; set; }
+        public DbSet<Role> _Roles { get; set; }
+        public DbSet<Permission> _Permissions { get; set; }
 
         Task<int> SaveChangesAsync();
     }
