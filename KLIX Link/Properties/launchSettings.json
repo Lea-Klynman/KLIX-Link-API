@@ -9,12 +9,12 @@
       "applicationUrl": "http://localhost:3000"
     },
     "https": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7263;http://localhost:3000"
+        "commandName": "Project",
+        "environmentVariables": {
+            "ASPNETCORE_ENVIRONMENT": "Development"
+        },
+        "dotnetRunMessages": true,
+        "applicationUrl": "https://localhost:7263;https://klix-link-api.onrender.com"
     },
     "Container (Dockerfile)": {
       "commandName": "Docker",

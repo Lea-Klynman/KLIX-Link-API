@@ -21,16 +21,17 @@ namespace KLIX_Link.Data
         public DbSet<UserActivityLog> _UserActivityLogs { get; set; }
 
 
-        public DataContext(DbContextOptions<DataContext> options, IConfiguration configuration) : base(options) {
-        _configuration = configuration;
+        public DataContext(DbContextOptions<DataContext> options, IConfiguration configuration) : base(options)
+        {
+            _configuration = configuration;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            var connectionString = _configuration["DB_CONNECTION_STRING"];
+
             if (!optionsBuilder.IsConfigured)
             {
-                var connectionString = _configuration["DB_CONNECTION_STRING"];
-
                 optionsBuilder.UseNpgsql(connectionString);
             }
 
