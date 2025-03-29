@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using KLIX_Link_Core.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace KLIX_Link.Data
 {
