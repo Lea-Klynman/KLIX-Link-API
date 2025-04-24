@@ -7,7 +7,6 @@ using KLIX_Link_Service.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace KLIX_Link.Controllers
 {
@@ -115,7 +114,6 @@ namespace KLIX_Link.Controllers
                 return Unauthorized("Invalid password or file not found.");
             }
 
-            // החזרת הקובץ להורדה
             return result;
 
         }
