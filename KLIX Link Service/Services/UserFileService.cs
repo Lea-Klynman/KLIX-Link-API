@@ -99,7 +99,6 @@ namespace KLIX_Link_Service.Services
                 return null;
             }
 
-            // 4. הוספת חתימה מוצפנת בסוף המערך
             byte[] signatureBytes = Encoding.UTF8.GetBytes($"##SIGNATURE:{userFile.Signature}##");
             byte[] finalBytes = encryptedFileBytes.Concat(signatureBytes).ToArray();
             return new FileContentResult(finalBytes, userFile.FileType)

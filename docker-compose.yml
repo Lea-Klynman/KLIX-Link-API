@@ -1,0 +1,6 @@
+services:
+  klixlink.api:
+    image: ${DOCKER_REGISTRY-}klixlinkapi
+    build:
+      context: .
+      dockerfile: KLIX Link/Dockerfile

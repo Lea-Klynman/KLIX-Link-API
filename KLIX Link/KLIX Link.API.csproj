@@ -7,6 +7,7 @@
     <RootNamespace>KLIX_Link</RootNamespace>
     <UserSecretsId>00e9e0d6-9b1e-4671-afc3-6dfaebf51727</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
