@@ -14,5 +14,7 @@ namespace KLIX_Link_Service.Post_Modle
         public string Name { get; set; }
         public string FilePassword { get; set; }
         public bool IsActive { get; set; }
+        public string Signature { get; set; } 
+
     }
 }

@@ -26,6 +26,7 @@ namespace KLIX_Link_Core.DTOS
         public bool IsActive { get; set; } = true;
         public string FileType { get; set; }
 
+        public string Signature { get; set; } 
 
 
     }

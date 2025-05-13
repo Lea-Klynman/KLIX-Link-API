@@ -45,5 +45,8 @@ namespace KLIX_Link_Core.Entities
         //emails alloew to see th file
         public ICollection<string> EmailAloowed { get; set; } = new List<string>();
 
+        public string Signature { get; set; } 
+
+
     }
 }

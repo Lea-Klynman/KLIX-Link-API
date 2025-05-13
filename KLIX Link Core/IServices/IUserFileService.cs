@@ -18,6 +18,10 @@ namespace KLIX_Link_Core.Services
         public Task<UserFileDto> GetUserFileByIdAsync(int id);
         public Task<IEnumerable<UserFileDto>> GetUserFilesByUserIdAsync(int userId);
         public Task<List<UserFileDto>> GetFileshareByEmail(string email);
+        public Task<FileContentResult> GetDecryptFileAsync(SharingFileDTO decryption);
+
+        public Task<FileContentResult> GetEncryptFileAsync(SharingFileDTO decryption);
+
 
         // PUT
         public Task<string> UploadFileAsync(IFormFile file, string fileName, string password, int userId, string type);
@@ -27,7 +31,6 @@ namespace KLIX_Link_Core.Services
         public Task<bool> CheckingIsAllowedViewAsync(string email, SharingFileDTO sharingFile);
 
         public Task<SharingFileDTO> SharingFileAsync(int id, string email);
-        public Task<FileContentResult> GetDecryptFileAsync(SharingFileDTO decryption);
 
         public Task<bool> UpdateFileNameAsync(int fileId, string newFileName);
 

@@ -118,6 +118,20 @@ namespace KLIX_Link.Controllers
 
         }
 
+        [HttpPost("encrypted/file")]
+        [Authorize(Policy = "UserOnly")]
+        public async Task<IActionResult> EncryptFileAsync([FromBody] SharingFileDTO request)
+        {
+            var result = await _fileService.GetEncryptFileAsync(request);
+            if (result == null)
+            {
+                return Unauthorized("Invalid password or file not found.");
+            }
+
+            return result;
+
+        }
+
 
         // PUT
         [HttpPut("Sharing/{id}")]
