@@ -7,7 +7,6 @@
     <RootNamespace>KLIX_Link</RootNamespace>
     <UserSecretsId>00e9e0d6-9b1e-4671-afc3-6dfaebf51727</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +18,9 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
-      <PrivateAssets>all</PrivateAssets>
+	<PackageReference Include="MailKit" Version="4.11.0" />
+
+		<PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.2" />
@@ -31,8 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KLIX Link.Core\KLIX Link.Core.csproj" />
-    <ProjectReference Include="..\KLIX Link.Service\KLIX Link.Service.csproj" />
+    <ProjectReference Include="..\KLIX Link Core\KLIX Link.Core.csproj" />
+    <ProjectReference Include="..\KLIX Link Service\KLIX Link.Service.csproj" />
     <ProjectReference Include="..\KLIX Link.Data\KLIX Link.Data.csproj" />
   </ItemGroup>
 
