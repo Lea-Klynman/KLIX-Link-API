@@ -18,6 +18,7 @@ COPY ["KLIX Link/KLIX Link.API.csproj", "KLIX Link/"]
 #COPY ["KLIX Link.Data/KLIX Link.Data.csproj", "KLIX Link.Data/"]
 RUN dotnet restore "./KLIX Link/KLIX Link.API.csproj"
 COPY . .
+RUN ls -la
 WORKDIR "/src/KLIX Link"
 RUN dotnet build "./KLIX Link.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
