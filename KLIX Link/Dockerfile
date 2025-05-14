@@ -13,9 +13,9 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["KLIX Link/KLIX Link.API.csproj", "KLIX Link/"]
-COPY ["KLIX Link Core/KLIX Link.Core.csproj", "KLIX Link Core/"]
-COPY ["KLIX Link Service/KLIX Link.Service.csproj", "KLIX Link Service/"]
-COPY ["KLIX Link.Data/KLIX Link.Data.csproj", "KLIX Link.Data/"]
+#COPY ["KLIX Link.Core/KLIX Link.Core.csproj", "KLIX Link Core/"]
+#COPY ["KLIX Link.Service/KLIX Link.Service.csproj", "KLIX Link Service/"]
+#COPY ["KLIX Link.Data/KLIX Link.Data.csproj", "KLIX Link.Data/"]
 RUN dotnet restore "./KLIX Link/KLIX Link.API.csproj"
 COPY . .
 WORKDIR "/src/KLIX Link"

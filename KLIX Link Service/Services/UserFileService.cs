@@ -82,6 +82,33 @@ namespace KLIX_Link_Service.Services
         }
 
 
+        //public async Task<FileContentResult> GetEncryptFileAsync(SharingFileDTO decryption)
+        //{
+        //    var userFile = await _userFileRepository.GetFileByIdAsync(decryption.Id);
+
+        //    if (userFile == null || userFile.FilePassword != decryption.Password)
+        //    {
+        //        return null; // סיסמה לא נכונה או קובץ לא נמצא
+        //    }
+
+        //    string fileUrl = DecryptLinkOrPassword(userFile.EncryptedLink, _encryptionKey);
+
+        //    var encryptedFileBytes = await _fileStorageService.DownloadFileAsync(fileUrl);
+        //    if (encryptedFileBytes == null)
+        //    {
+        //        return null;
+        //    }
+
+        //    var decryptedFile = DecryptFile(encryptedFileBytes, _encryptionKey);
+        //    byte[] signatureBytes = Encoding.UTF8.GetBytes($"##SIGNATURE:{userFile.Signature}##");
+        //    byte[] finalBytes = decryptedFile.Concat(signatureBytes).ToArray();
+        //    finalBytes=EncryptBytes(finalBytes, _encryptionKey);
+        //    return new FileContentResult(finalBytes, userFile.FileType)
+        //    {
+        //        FileDownloadName = userFile.Name + "." + userFile.FileType
+        //    };
+        //}
+
         public async Task<FileContentResult> GetEncryptFileAsync(SharingFileDTO decryption)
         {
             var userFile = await _userFileRepository.GetFileByIdAsync(decryption.Id);
@@ -99,13 +126,27 @@ namespace KLIX_Link_Service.Services
                 return null;
             }
 
-            byte[] signatureBytes = Encoding.UTF8.GetBytes($"##SIGNATURE:{userFile.Signature}##");
-            byte[] finalBytes = encryptedFileBytes.Concat(signatureBytes).ToArray();
-            return new FileContentResult(finalBytes, userFile.FileType)
+            // פענוח תוכן הקובץ בלבד
+            var decryptedFileBytes = DecryptFile(encryptedFileBytes, _encryptionKey);
+
+            // יצירת חתימה – משתמשים בתבנית ברורה לחיתוך בעתיד
+            string signature = $"<KLIXSIGNATURE_START>{userFile.Signature}<KLIXSIGNATURE_END>";
+            byte[] signatureBytes = Encoding.UTF8.GetBytes(signature);
+
+            // צירוף הקובץ המקורי עם החתימה
+            byte[] combinedBytes = new byte[decryptedFileBytes.Length + signatureBytes.Length];
+            Buffer.BlockCopy(decryptedFileBytes, 0, combinedBytes, 0, decryptedFileBytes.Length);
+            Buffer.BlockCopy(signatureBytes, 0, combinedBytes, decryptedFileBytes.Length, signatureBytes.Length);
+
+            // הצפנת כל החבילה מחדש
+            byte[] finalEncryptedBytes = EncryptBytes(combinedBytes, _encryptionKey);
+
+            return new FileContentResult(finalEncryptedBytes, userFile.FileType)
             {
-                FileDownloadName = userFile.Name + "." + userFile.FileType
+                FileDownloadName = $"{userFile.Name}.{userFile.FileType}"
             };
         }
+
 
         public async Task<List<UserFileDto>> GetFileshareByEmail(string email)
         {

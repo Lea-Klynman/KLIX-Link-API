@@ -8,7 +8,7 @@ using KLIX_Link_Core.IServices;
 
 namespace KLIX_Link_Service.Services
 {
-    public class UserActivityService:IUserActivityService
+    public class UserActivityService : IUserActivityService
     {
         private readonly IUserActivityRepository _repository;
 
