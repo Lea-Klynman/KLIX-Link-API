@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace KLIX_Link_Service.Services
@@ -14,6 +16,7 @@ namespace KLIX_Link_Service.Services
         private readonly IAmazonS3 _s3Client;
         private readonly string _encryptionKey;
         private readonly string _bucketName;
+        private readonly string _bucketNameEXE;
         private readonly IConfiguration _configuration;
 
         public S3Service(IConfiguration configuration)
@@ -24,6 +27,7 @@ namespace KLIX_Link_Service.Services
              Amazon.RegionEndpoint.GetBySystemName(configuration["AWS_REGION"]));
             _encryptionKey = configuration["ENCRYPTION_KEY"];
             _bucketName = configuration["AWS_BUCKET_NAME"];
+            _bucketNameEXE = configuration["AWS_BUCKET_NAME_EXE"];
         }
         public async Task<string> UploadFileAsync(IFormFile file, string fileName, byte[] encryptedData)
         {
@@ -102,6 +106,23 @@ namespace KLIX_Link_Service.Services
             }
         }
 
+        public async Task<string> GeneratePresignedUrl(  string fileName)
+        {
+            ;
+
+
+            var request = new GetPreSignedUrlRequest
+            {
+                BucketName = _bucketNameEXE,
+                Key = fileName,
+                Expires = DateTime.UtcNow.AddMinutes(10),
+                Verb = HttpVerb.GET
+            };
+
+            var url = _s3Client.GetPreSignedURL(request);
+
+            return  url ;
+        }
 
     }
 }

@@ -22,6 +22,8 @@ namespace KLIX_Link_Core.Services
 
         public Task<FileContentResult> GetEncryptFileAsync(SharingFileDTO decryption);
 
+        public  Task<string> GeneratePresignedUrl(string fileName);
+
 
         // PUT
         public Task<string> UploadFileAsync(IFormFile file, string fileName, string password, int userId, string type);

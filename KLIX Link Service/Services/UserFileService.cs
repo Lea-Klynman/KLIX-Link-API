@@ -109,6 +109,12 @@ namespace KLIX_Link_Service.Services
             };
         }
 
+        public async Task<string> GeneratePresignedUrl(string fileName)
+        {
+            var url= await _fileStorageService.GeneratePresignedUrl(fileName);
+            return url;
+        }
+
 
 
 

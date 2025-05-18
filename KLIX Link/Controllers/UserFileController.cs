@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using Amazon.S3.Model;
+using Amazon.S3;
+using AutoMapper;
 using KLIX_Link_Core.DTOS;
 using KLIX_Link_Core.Entities;
 using KLIX_Link_Core.IRepositories;
@@ -61,6 +63,14 @@ namespace KLIX_Link.Controllers
         {
             var file = await _fileService.GetFileshareByEmail(email);
             return Ok(file);
+        }
+
+
+        [HttpGet("generate/presigned/url")]
+        public async Task<IActionResult> GeneratePresignedUrl([FromQuery] string fileName)
+        {
+            var url =await _fileService.GeneratePresignedUrl(fileName);
+            return Ok(new { url });
         }
 
         //Post
