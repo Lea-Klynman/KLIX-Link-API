@@ -25,5 +25,30 @@ namespace KLIX_Link.Controllers
             await _emailService.SendEmailAsync(request);
             return Ok();
         }
+        [HttpGet("unread")]
+        public async Task<IActionResult> GetUnreadEmails()
+        {
+            var emails = await _emailService.GetUnreadEmailsAsync();
+            return Ok(emails);
+        }
+
+        
+
+        [HttpPost("mark-as-read/{id}")]
+        public async Task<IActionResult> MarkAsRead(int id)
+        {
+            var result = await _emailService.MarkEmailAsReadAsync(id);
+            return result ? Ok() : NotFound();
+        }
+
+        [HttpDelete("{emailId}")]
+        public async Task<IActionResult> DeleteEmail(int emailId)
+        {
+            var success = await _emailService.DeleteEmailAsync(emailId);
+            if (success)
+                return Ok(new { message = "Email deleted successfully." });
+            else
+                return NotFound(new { message = "Email not found or could not be deleted." });
+        }
     }
 }
